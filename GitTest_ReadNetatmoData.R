@@ -30,10 +30,38 @@ ggplot(data = NetatmoData, aes(DateTime, AH)) +
 NetatmoData
 calcAHs_kgm3(NetatmoData[['Temperature']]) * NetatmoData[['Humidity']]/100
 
-NetatmoData %>% 
+calcAHdiff_kgm3 <- function(DataTibble) {
+  
+}
+
+AHs <- NetatmoData %>% 
   filter(DateTime5min == ymd_hms('2017-03-02 12:05:00')) %>% 
-  filter(Room %in% c("Innenraum", "Aussenraum") %>% 
-  select('Temperature')%>%
-  calcCtoF()
+  filter(Room %in% c("Aussenraum")) %>% 
+  select('Temperature') %>%
+  calcAHs_kgm3()
+
+RHs <- NetatmoData %>% 
+  filter(DateTime5min == ymd_hms('2017-03-02 12:05:00')) %>% 
+  filter(Room %in% c("Aussenraum")) %>% 
+  select('Humidity')
+
+
+NetatmoData[['AHes']] <- NetatmoData[['DateTime']] %>% 
+  select('Temperature') %>%
+  calcAHs_kgm3()
+
+bbb <- NetatmoData %>% 
+  #filter(Room =="Aussenraum") %>% 
+  #head() %>% 
+  group_by(DateTime5min) %>% 
+  filter(Room =="Aussenraum") %>% 
+  select('Temperature')
+  
+NetAnest <- NetatmoData %>% nest(-DateTime5min)  
+  
 
   filter(NetatmoData, DateTime5min == ymd_hms('2017-03-02 12:05:00') & Room == "Aussenraum")
+
+  AHall <- NetAnest[[100000, 'data']][['AH']]
+  AHall - AHall[1]
+  
