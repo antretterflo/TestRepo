@@ -24,11 +24,17 @@ NetatmoData[['AH']]           <- calcAHs_kgm3(NetatmoData[['Temperature']]) * Ne
 NetatmoData[['VP']]           <- calcVPs_Pa(NetatmoData[['Temperature']]) * NetatmoData[['Humidity']]/100
 NetatmoData[['Ent']]          <- calcEnt_Jkg(NetatmoData[['Temperature']], (NetatmoData[['Humidity']]/100))
 
+satData <- tibble(temp = -30:40, satah = calcAHs_kgm3(-30:40))
 
-ggplot(data = NetatmoData, aes(DateTime, AH)) +
-  geom_line(aes(color = Room))
-NetatmoData
-calcAHs_kgm3(NetatmoData[['Temperature']]) * NetatmoData[['Humidity']]/100
+ggplot(data = NetatmoData, aes(Temperature, AH)) +
+  geom_point(aes(color = Room)) +
+  geom_line(data = satData, aes(x=temp, y=satah, color = 'red')) +
+  coord_cartesian(xlim = c(0, 30), ylim = c(0, 0.025)) +
+  facet_grid(.~Room)
+
+
+# NetatmoData
+# calcAHs_kgm3(NetatmoData[['Temperature']]) * NetatmoData[['Humidity']]/100
 
 # calcAHdiff_kgm3 <- function(DataTibble) {
 #   
